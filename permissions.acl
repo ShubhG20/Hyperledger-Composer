@@ -1,0 +1,140 @@
+/**
+ * Sample access control list.
+ */
+rule EverybodyCanReadEverything {
+    description: "Allow all participants read access to all resources"
+    participant: "gasolinesupplychain.*"
+    operation: READ
+    resource: "gasolinesupplychain.*"
+    action: ALLOW
+}
+
+rule OwnerHasFullAccessToTheirAssets {
+    description: "Allow all participants full access to their assets"
+    participant(p): "gasolinesupplychain.Refinery"
+    operation: ALL
+    resource(r): "gasolinesupplychain.Gasoline"
+    condition: (r.refinery.getIdentifier() === p.getIdentifier())
+    action: ALLOW
+}
+
+rule SystemACL {
+  description:  "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+
+rule LoadbyRefinery{
+
+ description: "Allow the refinery to change the load to truck"
+    participant: "gasolinesupplychain.Refinery"
+    operation: ALL
+    resource: "gasolinesupplychain.Load"
+    action: ALLOW
+
+}
+
+rule UnLoadbyTruck{
+
+ description: "Allow the truck to unload to gasstation"
+    participant: "gasolinesupplychain.Truck"
+    operation: ALL
+    resource: "gasolinesupplychain.Unload"
+    action: ALLOW
+
+}
+
+rule RefinebyRefinery{
+
+ description: "Allow the refinery to refine resources from assets"
+    participant: "gasolinesupplychain.Refinery"
+    operation: ALL
+    resource: "gasolinesupplychain.Refine"
+    action: ALLOW
+
+}
+
+
+
+
+rule RefinerySeeOwnHistoryOnly {
+  description: "Refineries should be able to see the history of their own transactions only"
+  participant(t): "gasolinesupplychain.Refinery"
+  operation: READ
+  resource(v): "org.hyperledger.composer.system.HistorianRecord"
+  condition: (v.participantInvoking.getIdentifier() != t.getIdentifier())
+  action: DENY
+}
+
+rule TruckSeeOwnHistoryOnly {
+  description: "Trucks should be able to see the history of their own transactions only"
+  participant(t): "gasolinesupplychain.Truck"
+  operation: READ
+  resource(v): "org.hyperledger.composer.system.HistorianRecord"
+  condition: (v.participantInvoking.getIdentifier() != t.getIdentifier())
+  action: DENY
+}
+
+rule GasStationsSeeOwnHistoryOnly {
+  description: "GasStation should be able to see the history of their own transactions only"
+  participant(t): "gasolinesupplychain.Gasstation"
+  operation: READ
+  resource(v): "org.hyperledger.composer.system.HistorianRecord"
+  condition: (v.participantInvoking.getIdentifier() != t.getIdentifier())
+  action: DENY
+}
+
+
+
+/**
+rule EntityCanChangeStateToProduction {
+    description: "Allow the entity to change the state of the pizza to production"
+    participant: "org.acme.howto.Entity"
+    operation: CREATE
+    resource: "org.acme.howto.ChangeStateToProduction"
+    action: ALLOW
+}
+
+rule EntityCanChangeStateToFreezing {
+    description: "Allow the entity to change the state of the pizza to freezing"
+    participant: "org.acme.howto.Entity"
+    operation: CREATE
+    resource: "org.acme.howto.ChangeStateToFreezing"
+    action: ALLOW
+}
+
+rule EntityCanChangeStateToPackaging {
+    description: "Allow the entity to change the state of the pizza to packaging"
+    participant: "org.acme.howto.Entity"
+    operation: CREATE
+    resource: "org.acme.howto.ChangeStateToPackaging"
+    action: ALLOW
+}
+
+rule EntityCanChangeStateToDistribution {
+    description: "Allow the entity to change the state of the pizza to packaging"
+    participant: "org.acme.howto.Entity"
+    operation: CREATE
+    resource: "org.acme.howto.ChangeStateToPackaging"
+    action: ALLOW
+}
+*/
